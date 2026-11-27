@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>Troubleshooter | Northlight Studio IT</title>
+  <meta name="description" content="Step-by-step guide for 'No internet connection' plus the read-only PC health and network doctor tools.">
+  <link rel="icon" href="assets/hero.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body data-page="troubleshoot">
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Sidebar"></aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="btn secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar">&#9776; Menu</button>
+        <h1>Troubleshooter: &ldquo;No internet connection&rdquo;</h1>
+      </header>
+
+      <main id="main" class="content">
+        <p class="page-intro">Answer each question with Yes or No. The guide follows the same order a technician uses, and the same order as the <code>network-doctor</code> tool below.</p>
+
+        <div class="split">
+          <section class="card" aria-labelledby="guide-title">
+            <h2 id="guide-title" class="visually-hidden">Guided troubleshooting</h2>
+            <p class="small muted" id="progress"></p>
+            <div id="guide" aria-live="polite"></div>
+            <div class="form-actions mt-1">
+              <button class="btn secondary" type="button" id="back-btn">&larr; Back</button>
+              <button class="btn secondary" type="button" id="restart-btn">Start again</button>
+            </div>
+          </section>
+
+          <section class="card" aria-labelledby="path-title">
+            <h2 id="path-title">Your answers so far</h2>
+            <ol id="path" class="mb-0"></ol>
+          </section>
+        </div>
+
+        <section class="card mt-1" aria-labelledby="tools-title">
+          <h2 id="tools-title">Run the diagnostic tools (IT staff)</h2>
+          <p>Two read-only Node.js scripts in the <code>tools</code> folder collect the same information automatically. They never change any setting.</p>
+          <pre><code>npm run pc-health        # OS, free disk space, firewall, updates
+npm run network-doctor   # connection, IP, router, 1.1.1.1, DNS</code></pre>
+          <div class="table-wrap"><table>
+            <caption class="visually-hidden">How to read the result</caption>
+            <thead><tr><th scope="col">Result</th><th scope="col">Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge ok">PASS</span></td><td>The check succeeded.</td></tr>
+              <tr><td><span class="badge danger">FAIL</span></td><td>The check failed. For the network doctor, fix the <em>first</em> failing step first; later steps often fail because of it.</td></tr>
+              <tr><td><span class="badge warn">SKIP</span></td><td>The information is not available on this computer (missing tool or permissions). It is not a pass.</td></tr>
+            </tbody></table></div>
+          <p class="small muted mt-1 mb-0">Network doctor steps: 1) connection exists &middot; 2) IP address assigned (169.254.x.x is a failure) &middot; 3) router answers ping &middot; 4) 1.1.1.1 answers ping &middot; 5) a domain name resolves (a failure here with step 4 passing means a DNS problem).</p>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/troubleshoot.js"></script>
+</body>
+</html>
