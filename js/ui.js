@@ -164,6 +164,11 @@
       nav,
       el('div', { class: 'sidebar-foot', id: 'sidebar-user' }, 'Demo data – stored only in this browser.'));
 
+    // Editorial kicker (section name) above the page title, e.g. "Operations".
+    const topbar = document.querySelector('.topbar');
+    const current = CFG.nav.find((i) => i.id === page);
+    if (topbar && current && !topbar.querySelector('.kicker')) topbar.prepend(el('p', { class: 'kicker' }, current.group));
+
     const toggle = document.getElementById('menu-toggle');
     if (toggle) {
       toggle.addEventListener('click', () => {

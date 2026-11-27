@@ -2,16 +2,16 @@
    Help Desk page styles (ticket details, incident guidance, reply history).
    ========================================================================== */
 .incident-guide {
-  margin: .6rem 0 0; padding: .7rem .9rem; border-radius: 8px; border: 1px solid #e9a29c; background: var(--danger-bg); color: #7f1a13; font-size: .88rem;
+  margin: .6rem 0 0; padding: .7rem .9rem; border-radius: var(--radius); border: 2px solid var(--danger); background: var(--danger-bg); color: #7F1A13; font-size: .9rem;
 }
 .incident-guide strong { display: block; margin-bottom: .25rem; }
 .incident-guide ol { margin: 0; padding-left: 1.2rem; }
 
 .ticket-thread { margin-top: .6rem; font-size: .88rem; }
-.ticket-thread > summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.ticket-thread > summary { cursor: pointer; color: var(--ink); font-weight: 700; text-decoration: underline; text-decoration-color: var(--accent-strong); text-underline-offset: 3px; min-height: 28px; }
 .thread-list { list-style: none; margin: .5rem 0; padding: 0; display: grid; gap: .4rem; }
-.thread-item { padding: .45rem .65rem; border-left: 3px solid var(--border); background: #f7f8fb; border-radius: 0 6px 6px 0; }
-.thread-item.reply { border-left-color: var(--accent); background: var(--accent-soft); }
+.thread-item { padding: .45rem .65rem; border-left: 4px solid var(--border); background: var(--paper-tint); border-radius: 0 var(--radius) var(--radius) 0; }
+.thread-item.reply { border-left-color: var(--ink); background: var(--warn-bg); }
 .thread-meta { display: block; font-size: .78rem; color: var(--muted); }
 .thread-form { display: flex; gap: .5rem; flex-wrap: wrap; align-items: flex-start; }
 .thread-form textarea { min-height: 64px; flex: 1 1 14rem; }
