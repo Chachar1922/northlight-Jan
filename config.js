@@ -19,14 +19,34 @@
     rulesUrl: 'rules.json',
     healthUrl: 'health.json',
 
-    /** Help Desk response targets in minutes, per priority. */
-    responseTargetsMinutes: { P1: 15, P2: 240, P3: 1440 },
+    /**
+     * Help Desk response targets per priority.
+     *   hours       – elapsed hours from creation
+     *   workingDays – Monday–Friday days from creation (weekends are skipped)
+     */
+    responseTargets: {
+      P1: { unit: 'hours', value: 1 },
+      P2: { unit: 'workingDays', value: 1 },
+      P3: { unit: 'workingDays', value: 3 },
+    },
     priorityLabels: {
-      P1: 'Many people affected, money at risk, or a security risk happening now',
+      P1: 'Many people affected, money at risk, or an active security incident',
       P2: 'One person blocked, or a deadline is affected',
-      P3: 'Minor issue – work can continue',
+      P3: 'Minor inconvenience while work can continue',
     },
     ticketStatuses: ['New', 'In progress', 'Resolved'],
+
+    /** Steps shown on any ticket whose urgency is "active security incident". */
+    incidentResponse: [
+      'Isolate the affected device: disconnect it from Wi-Fi and the network cable (do not switch it off).',
+      'Do not delete the suspicious email; keep it as evidence.',
+      'Warn staff not to open the same message or its attachment.',
+      'Escalate the incident to the IT manager and record what happened.',
+    ],
+
+    /** Staff groups. Membership of "IT Admins" (plus the IT department) opens the demo admin section. */
+    groups: ['Design Team', 'Sales Team', 'IT Admins', 'All Staff'],
+    defaultGroupByDepartment: { Design: 'Design Team', Sales: 'Sales Team', IT: 'IT Admins' },
 
     /** CRM */
     opportunityStages: ['Lead', 'Qualified', 'Quote', 'Won', 'Lost'],

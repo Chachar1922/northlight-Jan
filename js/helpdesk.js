@@ -63,14 +63,48 @@
       el('td', {}, el('span', { class: `badge ${t.priority.toLowerCase()}` }, t.priority)),
       el('td', {},
         el('div', { class: 'cell-title' }, t.title),
-        el('div', { class: 'cell-sub' }, `${t.requester}${t.email ? ' · ' + t.email : ''} · via ${t.source}`),
-        t.description ? el('div', { class: 'cell-sub pre-wrap ticket-description' }, t.description) : null),
+        el('div', { class: 'cell-sub' }, `${t.requester}${t.requesterRole ? ' (' + t.requesterRole + ')' : ''}${t.email ? ' · ' + t.email : ''} · via ${t.source}`),
+        t.description ? el('div', { class: 'cell-sub pre-wrap ticket-description' }, t.description) : null,
+        guidanceBox(t), threadBox(t)),
       el('td', { class: 'nowrap' },
         el('div', {}, UI.fmtDate(t.dueAt)),
         t.status === 'Resolved' ? el('span', { class: 'badge ok' }, 'Met / closed')
           : overdue ? el('span', { class: 'badge overdue' }, 'Overdue') : el('span', { class: 'cell-sub' }, UI.fmtDelta(t.dueAt, now))),
       el('td', {}, select));
   }
+
+  /** Incident-response checklist for active security incidents. */
+  function guidanceBox(t) {
+    const steps = Tickets.guidanceFor(t);
+    return steps ? el('div', { class: 'incident-guide' }, el('strong', {}, 'Incident response'), el('ol', {}, steps.map((s) => el('li', {}, s)))) : null;
+  }
+
+  /** Who is writing a reply: the signed-in staff member if there is one, otherwise "Help Desk". */
+  function replyAuthor() {
+    const session = Store.session.get(CFG.auth.sessionKey);
+    const user = session && Store.get('staff', session.userId);
+    return user ? user.name : 'Help Desk';
+  }
+
+  /** Collapsible history + reply form. Replies are plain text (rendered with textContent). */
+  function threadBox(t) {
+    const history = t.history || [];
+    const box = el('textarea', { id: `reply-${t.id}`, 'aria-label': `Reply to ${t.id}`, placeholder: 'Write a reply or note…', maxlength: '1000' });
+    const detailsEl = el('details', { class: 'ticket-thread', dataset: { thread: t.id }, open: openThreads.has(t.id) ? true : null },
+      el('summary', {}, `History and replies (${history.length})`),
+      el('ul', { class: 'thread-list' }, history.map((h) => el('li', { class: `thread-item ${h.type === 'reply' ? 'reply' : ''}` },
+        el('span', { class: 'thread-meta' }, `${UI.fmtDate(h.at)}${h.author ? ' · ' + h.author : ''}`), h.text))),
+      el('div', { class: 'thread-form' }, box,
+        el('button', { class: 'btn small secondary', type: 'button', onclick: () => {
+          const text = box.value.trim();
+          if (!text) { UI.toast('Write a reply first.', 'warning'); box.focus(); return; }
+          Tickets.addReply(t.id, replyAuthor(), text.slice(0, 1000));
+          openThreads.add(t.id); UI.toast(`Reply added to ${t.id}.`); render();
+        } }, 'Add reply')));
+    detailsEl.addEventListener('toggle', () => { if (detailsEl.open) openThreads.add(t.id); else openThreads.delete(t.id); });
+    return detailsEl;
+  }
+  const openThreads = new Set();
 
   // ---- events --------------------------------------------------------------
   form.addEventListener('submit', (e) => {

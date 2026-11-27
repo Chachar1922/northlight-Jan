@@ -26,7 +26,8 @@
   function renderConfig() {
     const rows = [
       ['App name', CFG.appName], ['Version', CFG.version], ['Environment', CFG.env], ['Storage prefix', CFG.storagePrefix], ['Rules file', CFG.rulesUrl],
-      ['Response targets (min)', Object.entries(CFG.responseTargetsMinutes).map(([k, v]) => `${k}=${v}`).join(', ')],
+      ['Response targets', Object.keys(CFG.responseTargets).map((p) => `${p}: ${Tickets.targetLabel(p)}`).join(', ')],
+      ['Staff groups', CFG.groups.join(', ')],
       ['Opportunity stages', CFG.opportunityStages.join(' → ')],
       ['Password hashing', `PBKDF2-SHA256, ${CFG.auth.pbkdf2Iterations.toLocaleString()} iterations`],
       ['TOTP', `${CFG.auth.totpDigits} digits, ${CFG.auth.totpStepSeconds} s step`],

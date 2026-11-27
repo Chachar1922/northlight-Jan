@@ -8,7 +8,6 @@
   'use strict';
 
   const DEMO_DOMAIN = global.NL_CONFIG.demoDomain;
-  const TARGET = global.NL_CONFIG.responseTargetsMinutes;
 
   /** Staff blueprint. Passwords are hashed with PBKDF2 at runtime (js/auth.js) – never stored in plain text. */
   const staffSpec = [
@@ -20,6 +19,7 @@
     { name: 'Sofia Reyes',  department: 'Sales',  role: 'Account Executive',     demoPassword: 'Demo-Pass-6!', totpSecret: 'PFXXK4TBNVSXG43F' },       // fake-demo
   ];
   staffSpec.forEach((s, i) => {
+    s.groups = [global.NL_CONFIG.defaultGroupByDepartment[s.department], 'All Staff'];
     s.id = 'E-' + (1001 + i);
     s.email = s.name.toLowerCase().replace(/[^a-z]+/g, '.') + '@' + DEMO_DOMAIN;
   });
@@ -27,22 +27,23 @@
   function build(now) {
     const t = now.getTime();
     const ago = (min) => new Date(t - min * 60000).toISOString();
-    const due = (createdMin, priority) => new Date(t - createdMin * 60000 + TARGET[priority] * 60000).toISOString();
+    // Response target comes from the shared Help Desk rules (js/tickets.js), so seed data and live tickets agree.
+    const due = (createdMin, priority) => global.Tickets.dueAtFor(ago(createdMin), priority);
 
-    const ticket = (id, requester, title, description, impact, urgency, priority, status, createdMin, source) => ({
-      id, requester, email: requester.toLowerCase().replace(/[^a-z]+/g, '.') + '@' + DEMO_DOMAIN,
-      title, description, impact, urgency, priority, status, source: source || 'helpdesk',
+    const ticket = (id, requester, role, title, description, impact, urgency, priority, status, createdMin) => ({
+      id, requester, requesterRole: role, email: requester.toLowerCase().replace(/[^a-z]+/g, '.') + '@' + DEMO_DOMAIN,
+      title, description, impact, urgency, priority, status, source: 'helpdesk',
       createdAt: ago(createdMin), dueAt: due(createdMin, priority), updatedAt: ago(createdMin),
       history: [{ at: ago(createdMin), text: 'Ticket created (sample data).' }],
     });
 
     return {
       tickets: [
-        ticket('T-1001', 'Priya Nair', 'Wi-Fi down on the second floor', 'Nobody on the design floor can connect to the office Wi-Fi since 09:00. Wired desks work.', 'many', 'none', 'P1', 'In progress', 40),
-        ticket('T-1002', 'Tomas Hale', 'New laptop for Maya must be ready by Monday', 'Maya (Sales) starts Monday. Needs a laptop, accounts, MFA enrolment and a headset.', 'one', 'deadline', 'P2', 'New', 70),
-        ticket('T-1003', 'Liam Okafor', 'Meeting-room printer shows offline', 'Printer in Meeting Room B says offline. I can use the one in the hallway meanwhile.', 'minor', 'none', 'P3', 'New', 180),
-        ticket('T-1004', 'Sofia Reyes', 'Suspicious e-mail asking to pay an invoice', 'Received an e-mail from "accounts@northlight-billing.example" asking for urgent bank-detail changes. I have not clicked anything.', 'one', 'security', 'P1', 'In progress', 8),
-        ticket('T-1005', 'Elena Marsh', 'Design software licence expired for intern', 'Licence lapsed over the weekend; renewal has now been applied.', 'one', 'none', 'P2', 'Resolved', 1500),
+        ticket('T-1001', 'Harriet Vale', 'Studio director', "I can't open my email and my client meeting starts in 30 minutes.", 'Outlook shows a sign-in loop on the studio director’s laptop. The meeting is with our largest client.', 'one', 'money', 'P1', 'In progress', 20),
+        ticket('T-1002', 'Liam Okafor', 'Designer', 'The second-floor printer prints blank pages.', 'Every job comes out blank. The hallway printer works as a workaround.', 'minor', 'none', 'P3', 'New', 180),
+        ticket('T-1003', 'Nadia Brooks', 'HR', 'New starter Maya begins Monday. She needs a laptop and accounts.', 'Needs a laptop, e-mail, file access and MFA enrolment before Monday 09:00.', 'one', 'deadline', 'P2', 'New', 70),
+        ticket('T-1004', 'Oskar Lindqvist', 'Finance', 'Three of us got an invoice email with an attachment. One person opened it.', 'Sender is unknown. The attachment was opened on one finance PC. Possible phishing / malware.', 'many', 'security', 'P1', 'In progress', 75),
+        ticket('T-1005', 'Mira Castellan', 'Account manager', 'Wi-Fi is slow in the meeting room.', 'Video calls stutter in Meeting Room A, mostly in the afternoon.', 'minor', 'none', 'P3', 'New', 300),
       ],
       leads: [
         { id: 'L-1001', name: 'Hannah Cole', company: 'Brightfield Bakery', email: 'hannah.cole@brightfield.example', service: 'Brand identity', message: 'We are opening a second shop and want a fresh brand.', source: 'seed', status: 'New', createdAt: ago(2880) },
