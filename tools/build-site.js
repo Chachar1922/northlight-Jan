@@ -20,6 +20,17 @@ for (const f of fs.readdirSync(ROOT)) if (f.endsWith('.html')) fs.copyFileSync(p
 for (const d of DIRS) fs.cpSync(path.join(ROOT, d), path.join(OUT, d), { recursive: true });
 for (const f of FILES) fs.copyFileSync(path.join(ROOT, f), path.join(OUT, f));
 
+// Cache busting: GitHub Pages lets browsers cache files for 10 minutes, so after a deploy a visitor could
+// load the new page with an OLD script and see a broken page. Every local CSS/JS/image reference gets a
+// ?v=<build id> suffix, so a new build always means new URLs.
+const buildId = (process.env.GITHUB_SHA || String(Date.now())).slice(0, 10);
+for (const f of fs.readdirSync(OUT)) {
+  if (!f.endsWith('.html')) continue;
+  const file = path.join(OUT, f);
+  const html = fs.readFileSync(file, 'utf8').replace(/(src|href)="((?:css[/]|js[/]|assets[/])[^"?#]+|config[.]js)"/g, '$1="$2?v=' + buildId + '"');
+  fs.writeFileSync(file, html);
+}
+
 const health = JSON.parse(fs.readFileSync(path.join(OUT, 'health.json'), 'utf8'));
 health.buildDate = new Date().toISOString().slice(0, 10);
 fs.writeFileSync(path.join(OUT, 'health.json'), JSON.stringify(health, null, 2) + '\n');

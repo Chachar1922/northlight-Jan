@@ -183,8 +183,16 @@
 
   /** Called once per page, before page scripts run their own logic. */
   function init() {
-    Store.seed();
+    try { Store.seed(); } catch (err) { console.error(err); loadWarning(err); }
     buildShell();
+  }
+
+  /** Visible warning when the page could not start (for example a stale cached script after an update). */
+  function loadWarning(err) {
+    const box = el('div', { class: 'alert warning', id: 'load-warning', role: 'alert' },
+      el('strong', {}, 'This page did not load completely.'),
+      el('span', {}, 'Your browser may be using an old cached file. Press Ctrl+F5 (or Cmd+Shift+R) to reload it. Details: ' + (err && err.message ? err.message : err)));
+    (document.querySelector('main') || document.body).prepend(box);
   }
 
   global.UI = { el, mount, fmtTime, fmtDate, fmtDelta, toast, alertBox, setFieldError, clearFieldError, clearErrors, validateForm, rules, download, toCsv, init };
