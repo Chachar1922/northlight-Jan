@@ -83,13 +83,20 @@
   async function ensureSeeded() {
     Store.seed();
     const meta = Store.meta();
-    if (meta.staffSeeded) return;
+    if (meta.staffSeeded) {
+      // Older stored records (before groups existed): fill in default groups so nobody loses access.
+      const rows = Store.all('staff');
+      if (rows.some((r) => !Array.isArray(r.groups))) {
+        Store.save('staff', rows.map((r) => (Array.isArray(r.groups) ? r : Object.assign({}, r, { groups: [CFG.defaultGroupByDepartment[r.department], 'All Staff'].filter(Boolean), mfaRequired: true }))));
+      }
+      return;
+    }
     const rows = [];
     for (const s of NL_SEED.staffSpec) {
       const cred = await makeCredential(s.demoPassword);
       rows.push({
         id: s.id, name: s.name, email: s.email, department: s.department, role: s.role, status: 'Active',
-        startDate: '2025-01-06', createdAt: new Date().toISOString(),
+        groups: s.groups, mfaRequired: true, startDate: '2025-01-06', createdAt: new Date().toISOString(),
         passwordHash: cred.passwordHash, salt: cred.salt, iterations: cred.iterations, totpSecret: s.totpSecret,
       });
     }
@@ -100,7 +107,7 @@
   // ---- sign-in flow --------------------------------------------------------
   const PENDING = 'pending-mfa';
   const SESSION = A.sessionKey;
-  const isAdmin = (user) => !!user && user.department === 'IT' && user.status === 'Active';
+  const isAdmin = (user) => !!user && user.department === 'IT' && user.status === 'Active' && Array.isArray(user.groups) && user.groups.includes('IT Admins');
 
   /** Step 1: e-mail + password. On success the user must still pass MFA. */
   async function checkPassword(email, password) {
@@ -130,11 +137,15 @@
     if (!s) return null;
     const user = Store.get('staff', s.userId);
     if (!user || user.status !== 'Active') { Store.session.del(SESSION); return null; }
+    // Leaver workflow: any session started before the revocation time is dead, even if the account is re-enabled later.
+    if (user.sessionsRevokedAt && s.at <= Date.parse(user.sessionsRevokedAt)) { Store.session.del(SESSION); return null; }
     return user;
   }
+  /** End all sessions for a user (as far as a browser-only demo can: sessions are checked on every page load and every few seconds). */
+  function revokeSessions(userId) { return Store.update('staff', userId, { sessionsRevokedAt: new Date().toISOString() }); }
   function signOut() { Store.session.del(SESSION); Store.session.del(PENDING); }
   function cancelPending() { Store.session.del(PENDING); }
   function hasPending() { return !!Store.session.get(PENDING); }
 
-  global.Auth = { ensureSeeded, hashPassword, makeCredential, totp, verifyTotp, secondsLeft, base32Decode, randomSecret, randomPassword, checkPassword, checkCode, currentUser, signOut, cancelPending, hasPending, isAdmin };
+  global.Auth = { revokeSessions, ensureSeeded, hashPassword, makeCredential, totp, verifyTotp, secondsLeft, base32Decode, randomSecret, randomPassword, checkPassword, checkCode, currentUser, signOut, cancelPending, hasPending, isAdmin };
 })(window);

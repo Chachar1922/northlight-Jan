@@ -11,7 +11,7 @@ const path = require('node:path');
 const ROOT = path.resolve(__dirname, '..');
 const OUT = path.join(ROOT, '_site');
 const DIRS = ['css', 'js', 'assets'];
-const FILES = ['rules.json', 'health.json', 'northlight.cloud.json'];
+const FILES = ['config.js', 'rules.json', 'health.json', 'northlight.cloud.json'];
 
 fs.rmSync(OUT, { recursive: true, force: true });
 fs.mkdirSync(OUT, { recursive: true });

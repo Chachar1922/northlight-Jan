@@ -137,6 +137,63 @@ test.describe('staff & MFA', () => {
     await expect(page.locator('#admin-result')).toContainText('cannot disable your own account');
   });
 
+
+  test('directory shows groups; joiner adds a group and requires MFA', async ({ page }) => {
+    await signIn(page, ...IT);
+    await expect(page.locator('tr[data-staff="E-1005"] .directory-groups')).toHaveText('Sales Team, All Staff');
+    await expect(page.locator('tr[data-staff="E-1001"] .directory-groups')).toContainText('IT Admins');
+    await expect(page.locator('#mfa-required-note')).toContainText('required');
+    await page.fill('#j-name', 'Zoe Hart');
+    await page.selectOption('#j-dept', 'Design');
+    await expect(page.locator('#j-group')).toHaveValue('Design Team');      // department pre-selects its group
+    await page.fill('#j-role', 'Motion Designer');
+    await page.click('#joiner-form button[type=submit]');
+    await expect(page.locator('#admin-result')).toContainText('Design / Design Team, All Staff');
+    const zoe = await page.evaluate(() => Store.all('staff').find((x) => x.name === 'Zoe Hart'));
+    expect(zoe.groups).toEqual(['Design Team', 'All Staff']);
+    expect(zoe.mfaRequired).toBe(true);
+    expect(zoe.role).toBe('Motion Designer');
+  });
+
+  test('leaver: sessions end live without a reload, and re-enabling does not revive them; record is kept', async ({ page }) => {
+    await signIn(page, ...SALES);
+    await expect(page.locator('#whoami')).toContainText('Tomas Hale');
+    await page.evaluate(() => { Store.update('staff', 'E-1005', { status: 'Disabled' }); Auth.revokeSessions('E-1005'); });
+    await expect(page.locator('#signin-view')).toBeVisible({ timeout: 6000 });
+    await expect(page.locator('#signin-result')).toContainText('session was ended');
+    await page.evaluate(() => Store.update('staff', 'E-1005', { status: 'Active' }));   // re-enabled
+    expect(await page.evaluate(() => Auth.currentUser())).toBeNull();                     // old session stays dead
+    expect(await page.evaluate(() => Store.get('staff', 'E-1005').name)).toBe('Tomas Hale'); // record kept
+  });
+
+  test('CSV import creates valid users, rejects bad rows, and never stores plain passwords', async ({ page }) => {
+    await signIn(page, ...IT);
+    await page.click('#csv-form button[type=submit]');
+    await expect(page.locator('#csv-file-error')).toContainText('Choose a CSV file');
+    const csv = [
+      'name,department,role,email,group',
+      'Ivy Chen,Design,Illustrator,,',
+      '"Park, Jun",Sales,Account Executive,,Sales Team',
+      'Bad Dept,Finance,Clerk,,',
+      'X,Design,Intern,,',
+      'Ivy Chen,Design,Duplicate,,',
+    ].join('\n');
+    await page.setInputFiles('#csv-file', { name: 'users.csv', mimeType: 'text/csv', buffer: Buffer.from(csv) });
+    await page.click('#csv-form button[type=submit]');
+    await expect(page.locator('#csv-result')).toContainText('2 user(s) imported, 3 row(s) rejected');
+    await expect(page.locator('#csv-errors li')).toHaveCount(3);
+    await expect(page.locator('#csv-created tbody tr')).toHaveCount(2);
+    const pw = await page.locator('#csv-created tbody tr').first().locator('td').nth(2).textContent();
+    const staff = await page.evaluate(() => Store.all('staff'));
+    expect(staff).toHaveLength(8);
+    expect(JSON.stringify(staff)).not.toContain(pw);
+    expect(staff.find((x) => x.name === 'Park, Jun').groups).toEqual(['Sales Team', 'All Staff']);
+    // header validation
+    await page.setInputFiles('#csv-file', { name: 'bad.csv', mimeType: 'text/csv', buffer: Buffer.from('foo,bar\n1,2') });
+    await page.click('#csv-form button[type=submit]');
+    await expect(page.locator('#csv-file-error')).toContainText('header row must contain');
+  });
+
   test('page shows the learning-model warning', async ({ page }) => {
     await page.goto('staff.html');
     await expect(page.locator('.alert.warning')).toContainText('server-side');
