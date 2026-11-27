@@ -102,3 +102,41 @@ details.faq p { margin: .75rem 0 0; color: var(--muted); }
 .chart .bar-quote { fill: #7a4e00; }
 .chart .bar-won { fill: #14693f; }
 .chart .bar-lost { fill: #8a93a6; }
+
+/* ==========================================================================
+   "Aurora" theme: Northlight's signature look (the northern-lights glow).
+   Overrides only; keeps the contrast ratios of the base palette.
+   ========================================================================== */
+:root {
+  --aurora-1: #3ddc97; --aurora-2: #5b8cff; --aurora-3: #b57bff;
+  --display: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+}
+h1, h2, .brand, .stat-value { font-family: var(--display); }
+h1 { letter-spacing: -.01em; }
+body { background: radial-gradient(1200px 500px at 85% -10%, #e4ecff 0%, transparent 60%), var(--bg); background-attachment: fixed; }
+
+/* Aurora ribbon on the hero and the sidebar */
+.hero { background:
+  radial-gradient(700px 320px at 15% 0%, rgba(61, 220, 151, .28), transparent 70%),
+  radial-gradient(800px 360px at 90% 10%, rgba(181, 123, 255, .32), transparent 70%),
+  radial-gradient(700px 400px at 60% 110%, rgba(91, 140, 255, .35), transparent 70%),
+  #0b1424; }
+.sidebar { background: linear-gradient(180deg, #0b1424 0%, #14233f 70%, #1b2f55 100%); }
+.site-header { background: #0b1424; border-bottom: 3px solid transparent; border-image: linear-gradient(90deg, var(--aurora-1), var(--aurora-2), var(--aurora-3)) 1; }
+.topbar { border-bottom: 3px solid transparent; border-image: linear-gradient(90deg, var(--aurora-1), var(--aurora-2), var(--aurora-3)) 1; }
+
+/* Softer, rounder surfaces with a glowing top edge */
+.card { border-radius: 16px; border-top: 3px solid transparent; border-image: none; background:
+  linear-gradient(#fff, #fff) padding-box, linear-gradient(90deg, var(--aurora-1), var(--aurora-2), var(--aurora-3)) border-box;
+  border: 1px solid var(--border); border-top: 3px solid transparent; }
+.table-wrap { border-radius: 14px; }
+.btn { border-radius: 999px; padding-inline: 1.2rem; }
+.btn:not(.secondary):not(.danger):not(.glow) { background: linear-gradient(90deg, #2250d6, #5b3fd6); }
+.btn:not(.secondary):not(.danger):not(.glow):hover { background: linear-gradient(90deg, #183ba3, #4a2fc0); }
+.nav-list a { border-radius: 999px; }
+.nav-list a[aria-current="page"] { background: rgba(255, 255, 255, .1); box-shadow: inset 3px 0 0 var(--aurora-1); }
+.eyebrow { color: var(--aurora-1); }
+.service-icon { background: linear-gradient(135deg, #dff8ec, #e6ecfd 55%, #f0e6ff); border-radius: 14px; }
+details.faq { border-radius: 14px; }
+.badge { letter-spacing: .02em; }
+td select { min-width: 9rem; width: auto; }
