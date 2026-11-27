@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "description": "Northlight Studio automation rules. Edit this file to change behaviour; no rule is hard-coded in automation.js. Nothing is ever sent externally – alerts only go to the local outbox list.",
+  "rules": [
+    {
+      "id": "R1",
+      "name": "Create CRM lead from website enquiry",
+      "trigger": "contact_form_submitted",
+      "when": null,
+      "actions": [
+        { "type": "create_lead", "source": "website" }
+      ],
+      "log": "Lead {{lead.id}} created for {{name}} <{{email}}>."
+    },
+    {
+      "id": "R2",
+      "name": "Create Help Desk ticket from website enquiry",
+      "trigger": "contact_form_submitted",
+      "when": null,
+      "actions": [
+        {
+          "type": "create_ticket",
+          "source": "website",
+          "category": "Website enquiry",
+          "impact": "minor",
+          "urgency": "none",
+          "title": "Website enquiry from {{name}}"
+        }
+      ],
+      "log": "Ticket {{ticket.id}} created with priority {{ticket.priority}}."
+    },
+    {
+      "id": "R3",
+      "name": "Urgent enquiries become priority P1",
+      "trigger": "contact_form_submitted",
+      "when": { "field": "message", "containsWord": "urgent" },
+      "actions": [
+        { "type": "set_ticket_priority", "priority": "P1", "reason": "Message contains the word \"urgent\"." }
+      ],
+      "log": "Ticket {{ticket.id}} raised to P1 because the message is urgent."
+    },
+    {
+      "id": "R4",
+      "name": "Create outbox alert for urgent enquiries",
+      "trigger": "contact_form_submitted",
+      "when": { "field": "message", "containsWord": "urgent" },
+      "actions": [
+        {
+          "type": "create_outbox_alert",
+          "channel": "email (simulated)",
+          "to": "it-oncall@northlight.example",
+          "subject": "URGENT enquiry {{ticket.id}} from {{name}}",
+          "body": "{{name}} ({{email}}) sent an urgent enquiry. Ticket {{ticket.id}} is P1. Message: {{message}}"
+        }
+      ],
+      "log": "Outbox alert {{alert.id}} queued (not sent externally)."
+    }
+  ]
+}

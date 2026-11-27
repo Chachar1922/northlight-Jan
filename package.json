@@ -1,0 +1,19 @@
+{
+  "name": "northlight-studio-it",
+  "version": "1.0.0",
+  "description": "Northlight Studio IT management platform (fictional, static, localStorage-based demo)",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "serve": "node tools/serve.js",
+    "pc-health": "node tools/pc-health.js",
+    "network-doctor": "node tools/network-doctor.js",
+    "check:cloud": "node tools/check-cloud.js",
+    "test:unit": "node --test tests/unit/",
+    "test:e2e": "playwright test",
+    "test": "npm run test:unit && npm run test:e2e"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.65.1"
+  }
+}
