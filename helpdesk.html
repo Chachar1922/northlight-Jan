@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>Help Desk | Northlight Studio IT</title>
+  <meta name="description" content="Northlight Studio Help Desk: create, prioritise and track IT support tickets.">
+  <link rel="icon" href="assets/hero.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body data-page="helpdesk">
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Sidebar"></aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="btn secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar">&#9776; Menu</button>
+        <h1>Help Desk</h1>
+        <span class="spacer"></span>
+        <button class="btn secondary small" id="export-json" type="button">Export JSON</button>
+        <button class="btn secondary small" id="export-csv" type="button">Export CSV</button>
+      </header>
+
+      <main id="main" class="content">
+        <p class="page-intro">Log IT problems, see what needs attention first, and track every ticket until it is resolved. Tickets from the public website and the automation rules appear here too.</p>
+
+        <section aria-label="Summary" class="grid grid-4 mb-1" id="stats"></section>
+
+        <div class="split">
+          <div class="grid">
+            <section class="card" aria-labelledby="new-ticket-title">
+              <h2 id="new-ticket-title">New ticket</h2>
+              <div id="form-result" tabindex="-1" aria-live="polite"></div>
+              <form id="ticket-form" class="form" novalidate>
+                <div class="field">
+                  <label for="requester">Requester <span class="req" aria-hidden="true">*</span></label>
+                  <input id="requester" name="requester" type="text" autocomplete="off">
+                </div>
+                <div class="field">
+                  <label for="title">Issue <span class="req" aria-hidden="true">*</span></label>
+                  <input id="title" name="title" type="text" autocomplete="off">
+                </div>
+                <div class="field">
+                  <label for="description">Details <span class="muted">(optional)</span></label>
+                  <textarea id="description" name="description"></textarea>
+                </div>
+                <div class="field">
+                  <label for="impact">Impact <span class="req" aria-hidden="true">*</span></label>
+                  <select id="impact" name="impact"></select>
+                </div>
+                <div class="field">
+                  <label for="urgency">Urgency <span class="req" aria-hidden="true">*</span></label>
+                  <select id="urgency" name="urgency"></select>
+                </div>
+                <p class="alert info mb-0" id="priority-preview" aria-live="polite"></p>
+                <div class="form-actions"><button class="btn" type="submit">Create ticket</button></div>
+              </form>
+            </section>
+
+            <section class="card" aria-labelledby="rules-title">
+              <h2 id="rules-title">Priority guide</h2>
+              <ul class="mb-0" id="priority-guide"></ul>
+            </section>
+          </div>
+
+          <section aria-labelledby="tickets-title">
+            <div class="row between mb-1">
+              <h2 id="tickets-title" class="mb-0">Tickets</h2>
+              <div class="row">
+                <div class="field">
+                  <label for="filter-status" class="visually-hidden">Filter by status</label>
+                  <select id="filter-status"><option value="">All statuses</option></select>
+                </div>
+                <div class="field">
+                  <label for="sort-by" class="visually-hidden">Sort tickets</label>
+                  <select id="sort-by">
+                    <option value="priority">Sort: priority (P1 first)</option>
+                    <option value="newest">Sort: newest first</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption class="visually-hidden">Support tickets</caption>
+                <thead>
+                  <tr><th scope="col">ID</th><th scope="col">Priority</th><th scope="col">Ticket</th><th scope="col">Response target</th><th scope="col">Status</th></tr>
+                </thead>
+                <tbody id="ticket-rows"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/tickets.js"></script>
+  <script src="js/helpdesk.js"></script>
+</body>
+</html>
