@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const PAGES = fs.readdirSync(path.resolve(__dirname, '..', '..')).filter((f) => f.endsWith('.html')).sort();
-const SIZES = [['phone', 375, 800], ['tablet', 768, 1024], ['desktop', 1280, 800]];
+const SIZES = [['small phone', 320, 700], ['phone', 375, 800], ['tablet', 768, 1024], ['desktop', 1280, 800]];
 
 test.describe('responsive layout', () => {
   test.skip(({ isMobile }) => isMobile, 'Viewport sizes are set explicitly below.');

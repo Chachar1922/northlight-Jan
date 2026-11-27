@@ -80,3 +80,6 @@ ol, ul { padding-left: 1.25rem; }
   html { scroll-behavior: auto; }
   * { transition: none !important; animation: none !important; }
 }
+
+/* Long unbreakable strings (file names, e-mail addresses, code) must wrap instead of widening the page. */
+h1, h2, h3, h4, p, li, dd, dt, code, .cell-sub, .alert { overflow-wrap: anywhere; }
