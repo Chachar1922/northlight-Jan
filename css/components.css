@@ -95,3 +95,10 @@ details.faq p { margin: .75rem 0 0; color: var(--muted); }
 .log-line { font-family: var(--mono); font-size: .84rem; }
 .step-result { display: grid; grid-template-columns: auto 1fr; gap: .75rem; align-items: start; padding: .75rem; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
 .demo-banner { background: var(--warn-bg); border-bottom: 1px solid #e6bf6a; color: #5b3a00; font-size: .85rem; padding: .4rem 1rem; text-align: center; }
+
+/* ---- CRM chart bars (fill set in CSS, not inline) ------------------------- */
+.chart .bar-lead { fill: #6f8ff0; }
+.chart .bar-qualified { fill: #2250d6; }
+.chart .bar-quote { fill: #7a4e00; }
+.chart .bar-won { fill: #14693f; }
+.chart .bar-lost { fill: #8a93a6; }

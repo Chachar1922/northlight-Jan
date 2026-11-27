@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>CRM | Northlight Studio IT</title>
+  <meta name="description" content="Northlight Studio CRM: leads, accounts, contacts, opportunities and support cases.">
+  <link rel="icon" href="assets/hero.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body data-page="crm">
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Sidebar"></aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="btn secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar">&#9776; Menu</button>
+        <h1>CRM</h1>
+      </header>
+
+      <main id="main" class="content">
+        <p class="page-intro">Manage leads and customers. Enquiries from the public website arrive here as leads automatically. Converting a lead creates an account, a contact and an opportunity.</p>
+        <div id="page-result" tabindex="-1" aria-live="polite"></div>
+
+        <div class="tabs" role="tablist" aria-label="CRM sections" id="tabs"></div>
+
+        <section id="panel-dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
+          <div class="grid grid-4 mb-1" id="crm-stats"></div>
+          <div class="card">
+            <h2>Opportunities by stage</h2>
+            <div id="stage-chart"></div>
+            <p class="small muted mb-0" id="stage-summary"></p>
+          </div>
+        </section>
+
+        <section id="panel-leads" role="tabpanel" aria-labelledby="tab-leads" hidden>
+          <div class="split">
+            <div class="card">
+              <h2>New lead</h2>
+              <div id="lead-result" tabindex="-1" aria-live="polite"></div>
+              <form id="lead-form" class="form" novalidate>
+                <div class="field"><label for="lead-name">Name <span class="req" aria-hidden="true">*</span></label><input id="lead-name" name="name" type="text"></div>
+                <div class="field"><label for="lead-email">E-mail <span class="req" aria-hidden="true">*</span></label><input id="lead-email" name="email" type="email"></div>
+                <div class="field"><label for="lead-company">Company</label><input id="lead-company" name="company" type="text"></div>
+                <div class="field"><label for="lead-service">Service</label>
+                  <select id="lead-service" name="service"><option value="">Not sure</option><option>Brand identity</option><option>Web design</option><option>Product design</option></select></div>
+                <div class="field"><label for="lead-message">Notes</label><textarea id="lead-message" name="message"></textarea></div>
+                <div class="form-actions"><button class="btn" type="submit">Add lead</button></div>
+              </form>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <caption class="visually-hidden">Leads</caption>
+                <thead><tr><th scope="col">ID</th><th scope="col">Lead</th><th scope="col">Source</th><th scope="col">Status</th><th scope="col">Action</th></tr></thead>
+                <tbody id="lead-rows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="panel-accounts" role="tabpanel" aria-labelledby="tab-accounts" hidden>
+          <div class="table-wrap"><table>
+            <caption class="visually-hidden">Accounts</caption>
+            <thead><tr><th scope="col">ID</th><th scope="col">Account</th><th scope="col">Industry</th><th scope="col">Contacts</th><th scope="col">Opportunities</th></tr></thead>
+            <tbody id="account-rows"></tbody></table></div>
+        </section>
+
+        <section id="panel-contacts" role="tabpanel" aria-labelledby="tab-contacts" hidden>
+          <div class="table-wrap"><table>
+            <caption class="visually-hidden">Contacts</caption>
+            <thead><tr><th scope="col">ID</th><th scope="col">Name</th><th scope="col">E-mail</th><th scope="col">Account</th></tr></thead>
+            <tbody id="contact-rows"></tbody></table></div>
+        </section>
+
+        <section id="panel-opportunities" role="tabpanel" aria-labelledby="tab-opportunities" hidden>
+          <div class="table-wrap"><table>
+            <caption class="visually-hidden">Opportunities</caption>
+            <thead><tr><th scope="col">ID</th><th scope="col">Opportunity</th><th scope="col">Account</th><th scope="col">Value</th><th scope="col">Stage</th></tr></thead>
+            <tbody id="opportunity-rows"></tbody></table></div>
+        </section>
+
+        <section id="panel-cases" role="tabpanel" aria-labelledby="tab-cases" hidden>
+          <div class="split">
+            <div class="card">
+              <h2>New support case</h2>
+              <div id="case-result" tabindex="-1" aria-live="polite"></div>
+              <form id="case-form" class="form" novalidate>
+                <div class="field"><label for="case-subject">Subject <span class="req" aria-hidden="true">*</span></label><input id="case-subject" name="subject" type="text"></div>
+                <div class="field"><label for="case-account">Account</label><select id="case-account" name="accountId"></select></div>
+                <div class="field"><label for="case-priority">Priority</label>
+                  <select id="case-priority" name="priority"><option value="P1">P1</option><option value="P2">P2</option><option value="P3" selected>P3</option></select></div>
+                <div class="field"><label for="case-due">Due time <span class="muted">(optional)</span></label><input id="case-due" name="dueAt" type="datetime-local">
+                  <p class="hint">Leave empty to use the response target for the chosen priority.</p></div>
+                <div class="form-actions"><button class="btn" type="submit">Create case</button></div>
+              </form>
+            </div>
+            <div class="table-wrap"><table>
+              <caption class="visually-hidden">Support cases</caption>
+              <thead><tr><th scope="col">ID</th><th scope="col">Case</th><th scope="col">Priority</th><th scope="col">Due</th><th scope="col">Status</th></tr></thead>
+              <tbody id="case-rows"></tbody></table></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/tickets.js"></script>
+  <script src="js/crm-data.js"></script>
+  <script src="js/crm.js"></script>
+</body>
+</html>
