@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>Automation | Northlight Studio IT</title>
+  <meta name="description" content="Northlight Studio automation: rules, outbox alerts, logs and execution results connecting the website, Help Desk and CRM.">
+  <link rel="icon" href="assets/hero.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body data-page="automation">
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Sidebar"></aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="btn secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar">&#9776; Menu</button>
+        <h1>Automation</h1>
+      </header>
+
+      <main id="main" class="content">
+        <p class="page-intro">When someone submits the website contact form, these rules (loaded from <code>rules.json</code>) create a CRM lead and a Help Desk ticket. Urgent messages become P1 and queue an alert.</p>
+        <div class="alert info"><strong>Local demonstration</strong>Nothing is sent externally. The outbox is only a list stored in this browser.</div>
+
+        <div class="grid grid-3 mb-1" id="auto-stats"></div>
+
+        <section class="card mb-1" aria-labelledby="test-title">
+          <h2 id="test-title">Try it: simulate a contact form submission</h2>
+          <div id="test-result" tabindex="-1" aria-live="polite"></div>
+          <form id="test-form" class="form" novalidate>
+            <div class="grid grid-2">
+              <div class="field"><label for="t-name">Name <span class="req" aria-hidden="true">*</span></label><input id="t-name" name="name" type="text"></div>
+              <div class="field"><label for="t-email">E-mail <span class="req" aria-hidden="true">*</span></label><input id="t-email" name="email" type="email"></div>
+            </div>
+            <div class="field"><label for="t-message">Message <span class="req" aria-hidden="true">*</span></label><textarea id="t-message" name="message"></textarea>
+              <p class="hint">Include the word &ldquo;urgent&rdquo; to trigger rules R3 and R4.</p></div>
+            <div class="form-actions"><button class="btn" type="submit">Run automation</button></div>
+          </form>
+        </section>
+
+        <section class="card mb-1" aria-labelledby="rules-title">
+          <h2 id="rules-title">Rules in rules.json</h2>
+          <div class="table-wrap"><table>
+            <caption class="visually-hidden">Automation rules</caption>
+            <thead><tr><th scope="col">ID</th><th scope="col">Rule</th><th scope="col">Condition</th><th scope="col">Actions</th></tr></thead>
+            <tbody id="rule-rows"></tbody></table></div>
+        </section>
+
+        <section class="mb-1" aria-labelledby="runs-title">
+          <h2 id="runs-title">Execution results</h2>
+          <div class="table-wrap"><table>
+            <caption class="visually-hidden">Automation runs</caption>
+            <thead><tr><th scope="col">Run</th><th scope="col">When</th><th scope="col">Outcome</th><th scope="col">Rules</th></tr></thead>
+            <tbody id="run-rows"></tbody></table></div>
+        </section>
+
+        <div class="grid grid-2">
+          <section aria-labelledby="outbox-title">
+            <h2 id="outbox-title">Outbox alerts</h2>
+            <div class="table-wrap"><table>
+              <caption class="visually-hidden">Outbox</caption>
+              <thead><tr><th scope="col">ID</th><th scope="col">Alert</th><th scope="col">Status</th></tr></thead>
+              <tbody id="outbox-rows"></tbody></table></div>
+          </section>
+          <section aria-labelledby="log-title">
+            <h2 id="log-title">Automation log</h2>
+            <div class="table-wrap"><table>
+              <caption class="visually-hidden">Automation log</caption>
+              <thead><tr><th scope="col">Time</th><th scope="col">Rule</th><th scope="col">Message</th></tr></thead>
+              <tbody id="log-rows"></tbody></table></div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/tickets.js"></script>
+  <script src="js/crm-data.js"></script>
+  <script src="js/automation.js"></script>
+  <script src="js/automation-page.js"></script>
+</body>
+</html>
