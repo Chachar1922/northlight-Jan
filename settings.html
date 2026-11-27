@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>Data &amp; Cloud | Northlight Studio IT</title>
+  <meta name="description" content="Application health, central configuration, cloud resource description and export of all Northlight Studio demo data.">
+  <link rel="icon" href="assets/hero.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body data-page="settings">
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Sidebar"></aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="btn secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar">&#9776; Menu</button>
+        <h1>Data &amp; Cloud</h1>
+      </header>
+
+      <main id="main" class="content">
+        <p class="page-intro">Application health, central settings, the fictional cloud infrastructure and a one-click export of everything stored in this browser.</p>
+        <div id="page-result" tabindex="-1" aria-live="polite"></div>
+
+        <div class="grid grid-2 mb-1">
+          <section class="card" aria-labelledby="health-title">
+            <h2 id="health-title">Application health</h2>
+            <dl id="health" class="mb-0"></dl>
+          </section>
+          <section class="card" aria-labelledby="data-title">
+            <h2 id="data-title">Your data</h2>
+            <p>All data lives in this browser&rsquo;s localStorage under keys starting with <code>nl.</code>. Export includes tickets, leads, accounts, contacts, opportunities, cases, staff (password hashes only), outbox and automation logs.</p>
+            <div class="form-actions">
+              <button class="btn" type="button" id="export-all">Export all data</button>
+              <button class="btn danger" type="button" id="reset-data">Reset demo data</button>
+            </div>
+            <p class="small muted mt-1 mb-0" id="data-counts"></p>
+          </section>
+        </div>
+
+        <section class="card mb-1" aria-labelledby="cfg-title">
+          <h2 id="cfg-title">Central configuration (<code>js/config.js</code>)</h2>
+          <div class="table-wrap"><table>
+            <caption class="visually-hidden">Selected settings</caption>
+            <thead><tr><th scope="col">Setting</th><th scope="col">Value</th></tr></thead>
+            <tbody id="cfg-rows"></tbody></table></div>
+        </section>
+
+        <section class="card" aria-labelledby="cloud-title">
+          <h2 id="cloud-title">Cloud infrastructure (<code>northlight.cloud.json</code>)</h2>
+          <p class="small muted">Fictional. Checked in CI by <code>tools/check-cloud.js</code> before every deployment.</p>
+          <div class="table-wrap"><table>
+            <caption class="visually-hidden">Cloud resources</caption>
+            <thead><tr><th scope="col">Type</th><th scope="col">Name</th><th scope="col">owner</th><th scope="col">env</th><th scope="col">cost-center</th></tr></thead>
+            <tbody id="cloud-rows"></tbody></table></div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>

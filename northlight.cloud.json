@@ -1,0 +1,26 @@
+{
+  "$comment": "Fictional cloud infrastructure description for Northlight Studio. No real subscription, IDs or keys. Validated by tools/check-cloud.js.",
+  "project": "northlight",
+  "provider": "fictional-cloud",
+  "environment": "prod",
+  "requiredTags": ["owner", "env", "cost-center"],
+  "resourceGroup": {
+    "name": "rg-northlight-prod-001",
+    "location": "westeurope",
+    "tags": { "owner": "it-team@northlight.example", "env": "prod", "cost-center": "CC-1001" }
+  },
+  "resources": [
+    {
+      "type": "webApp",
+      "name": "app-northlight-prod-001",
+      "description": "Static web app hosting the Northlight Studio website and internal tools",
+      "tags": { "owner": "it-team@northlight.example", "env": "prod", "cost-center": "CC-1001" }
+    },
+    {
+      "type": "storage",
+      "name": "stnorthlightprod001",
+      "description": "Storage account for exported data backups and static assets",
+      "tags": { "owner": "it-team@northlight.example", "env": "prod", "cost-center": "CC-1001" }
+    }
+  ]
+}
