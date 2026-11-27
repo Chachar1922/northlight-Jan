@@ -50,6 +50,22 @@ test.describe('crm', () => {
     expect(await count(page, 'Qualified')).toBe('0');
   });
 
+  test('won and lost opportunities record a reason', async ({ page }) => {
+    await page.goto('crm.html');
+    await page.click('#tab-opportunities');
+    await expect(page.locator('#reason-O-1003')).toHaveValue('Existing relationship and a fast turnaround.');
+    await expect(page.locator('tr[data-opp="O-1001"]')).not.toContainText('Reason needed');     // Quote stage: no reason column input
+    await page.selectOption('select[data-id="O-1001"]', 'Lost');
+    await expect(page.locator('tr[data-opp="O-1001"]')).toContainText('Reason needed');
+    await page.fill('#reason-O-1001', 'Budget was cut <b>entirely</b>.');
+    await page.click('tr[data-opp="O-1001"] button:has-text("Save")');
+    await expect(page.locator('tr[data-opp="O-1001"]')).not.toContainText('Reason needed');
+    await page.reload();
+    await page.click('#tab-opportunities');
+    await expect(page.locator('#reason-O-1001')).toHaveValue('Budget was cut <b>entirely</b>.');
+    expect(await page.evaluate(() => Store.get('opportunities', 'O-1001').reason)).toBe('Budget was cut <b>entirely</b>.');
+  });
+
   test('lead and case forms validate input', async ({ page }) => {
     await page.goto('crm.html');
     await page.click('#tab-leads');

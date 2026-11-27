@@ -31,11 +31,12 @@
 
     mount($('run-rows'), runs.length ? runs.map((r) => el('tr', { dataset: { run: r.id } },
       el('td', { class: 'mono nowrap' }, r.id),
-      el('td', { class: 'nowrap' }, UI.fmtDate(r.startedAt)),
+      el('td', { class: 'nowrap run-time' }, UI.fmtDate(r.startedAt), el('div', { class: 'cell-sub' }, UI.fmtTime(r.startedAt))),
+      el('td', { class: 'nowrap run-duration' }, r.durationMs === undefined ? '—' : `${r.durationMs} ms`),
       el('td', {}, el('span', { class: `badge ${r.ok ? 'ok' : 'danger'}` }, r.ok ? 'Success' : 'Failed'),
         r.summary ? el('div', { class: 'cell-sub' }, `${r.summary.name || ''} → ${r.summary.ticketId || 'no ticket'}${r.summary.priority ? ' (' + r.summary.priority + ')' : ''}`) : null,
         r.error ? el('div', { class: 'cell-sub' }, r.error) : null),
-      el('td', {}, (r.results || []).map((x) => el('div', {}, statusBadge(x.status), ' ', el('span', { class: 'small' }, `${x.ruleId} ${x.name}`)))))) : emptyRow(4, 'No runs yet. Submit the website contact form or use the test form above.'));
+      el('td', {}, (r.results || []).map((x) => el('div', {}, statusBadge(x.status), ' ', el('span', { class: 'small rule-name' }, `${x.ruleId} ${x.name}`), x.at ? el('span', { class: 'cell-sub' }, ` · ${UI.fmtTime(x.at)}`) : null))))) : emptyRow(5, 'No runs yet. Submit the website contact form or use the test form above.'));
 
     mount($('outbox-rows'), outbox.length ? outbox.map((m) => el('tr', { class: 'outbox-item' },
       el('td', { class: 'mono nowrap' }, m.id),
@@ -43,7 +44,7 @@
       el('td', {}, el('span', { class: 'badge warn' }, m.status)))) : emptyRow(3, 'No alerts. Urgent enquiries create one.'));
 
     mount($('log-rows'), logs.length ? logs.map((l) => el('tr', { class: 'log-item' },
-      el('td', { class: 'nowrap small' }, UI.fmtDate(l.createdAt)),
+      el('td', { class: 'nowrap small' }, UI.fmtDate(l.createdAt), el('div', { class: 'cell-sub' }, UI.fmtTime(l.createdAt))),
       el('td', { class: 'nowrap' }, statusBadge(l.status), ' ', el('span', { class: 'mono small' }, l.ruleId)),
       el('td', { class: 'log-line' }, l.message))) : emptyRow(3, 'No log entries yet.'));
   }

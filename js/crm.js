@@ -121,8 +121,19 @@
     mount($('opportunity-rows'), rows.length ? rows.map((o) => el('tr', { dataset: { opp: o.id } },
       el('td', { class: 'mono' }, o.id), el('td', { class: 'cell-title' }, o.name), el('td', {}, accountName(o.accountId)), el('td', {}, money(o.value)),
       el('td', {}, el('select', { 'aria-label': `Stage of ${o.id}`, dataset: { id: o.id }, onchange: (e) => { CRM.setOpportunityStage(o.id, e.target.value); UI.toast(`${o.id} moved to ${e.target.value}.`); renderAll(); } },
-        CRM.STAGES.map((s) => el('option', { value: s, selected: s === o.stage }, s)))))) : empty(5, 'No opportunities yet.'));
+        CRM.STAGES.map((s) => el('option', { value: s, selected: s === o.stage }, s)))),
+      reasonCell(o))) : empty(6, 'No opportunities yet.'));
   }
+  /** Won/lost opportunities record why. Other stages show a dash. */
+  function reasonCell(o) {
+    if (o.stage !== 'Won' && o.stage !== 'Lost') return el('td', { class: 'muted' }, '—');
+    const input = el('input', { type: 'text', class: 'reason-input', id: `reason-${o.id}`, 'aria-label': `Why was ${o.id} ${o.stage.toLowerCase()}?`, value: o.reason || '', maxlength: '300', placeholder: o.stage === 'Won' ? 'Why did we win?' : 'Why did we lose?' });
+    const save = () => { CRM.setOpportunityReason(o.id, input.value); UI.toast(`Reason saved for ${o.id}.`); renderAll(); };
+    return el('td', {}, el('div', { class: 'row' }, input,
+      el('button', { class: 'btn small secondary', type: 'button', onclick: save }, 'Save')),
+      o.reason ? null : el('span', { class: 'badge warn' }, 'Reason needed'));
+  }
+
   function renderCases() {
     const cases = Store.all('cases').slice().reverse();
     mount($('case-account'), el('option', { value: '' }, 'No account'), Store.all('accounts').map((a) => el('option', { value: a.id }, a.name)));

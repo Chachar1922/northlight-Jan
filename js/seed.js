@@ -61,8 +61,8 @@
       opportunities: [
         { id: 'O-1001', accountId: 'A-1001', name: 'Alder & Finch brand refresh', stage: 'Quote', value: 18000, createdAt: ago(9000) },
         { id: 'O-1002', accountId: 'A-1002', name: 'Kestrel website redesign', stage: 'Qualified', value: 32000, createdAt: ago(7000) },
-        { id: 'O-1003', accountId: 'A-1002', name: 'Kestrel packaging design', stage: 'Won', value: 9500, createdAt: ago(12000) },
-        { id: 'O-1004', accountId: 'A-1001', name: 'Alder & Finch annual report', stage: 'Lost', value: 6000, createdAt: ago(11000) },
+        { id: 'O-1003', accountId: 'A-1002', name: 'Kestrel packaging design', stage: 'Won', value: 9500, reason: 'Existing relationship and a fast turnaround.', createdAt: ago(12000) },
+        { id: 'O-1004', accountId: 'A-1001', name: 'Alder & Finch annual report', stage: 'Lost', value: 6000, reason: 'Client chose a cheaper agency.', createdAt: ago(11000) },
       ],
       cases: [
         { id: 'S-1001', accountId: 'A-1002', subject: 'Kestrel cannot open delivered logo files', priority: 'P2', status: 'Open', createdAt: ago(60), dueAt: due(60, 'P2') },

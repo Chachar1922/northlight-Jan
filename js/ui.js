@@ -42,6 +42,8 @@
     if (isNaN(d)) return '—';
     return d.toLocaleString(undefined, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
   }
+  /** Time with seconds, e.g. 14:05:09. */
+  function fmtTime(iso) { const d = new Date(iso); return isNaN(d) ? '—' : d.toLocaleTimeString(undefined, { hour12: false }); }
   /** "in 2h 5m" / "3h 10m overdue". */
   function fmtDelta(iso, now = Date.now()) {
     const ms = new Date(iso).getTime() - now;
@@ -180,5 +182,5 @@
     buildShell();
   }
 
-  global.UI = { el, mount, fmtDate, fmtDelta, toast, alertBox, setFieldError, clearFieldError, clearErrors, validateForm, rules, download, toCsv, init };
+  global.UI = { el, mount, fmtTime, fmtDate, fmtDelta, toast, alertBox, setFieldError, clearFieldError, clearErrors, validateForm, rules, download, toCsv, init };
 })(window);

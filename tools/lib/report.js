@@ -23,4 +23,24 @@ function printChecks(title, checks) {
     console.log(wrap(`What it means: ${c.meaning}`));
   }
 }
-module.exports = { printChecks, wrap, paint, badge };
+/** Plain-text version of a report (no colours), used for saved files. */
+function formatChecks(title, checks, extra = []) {
+  const lines = [title, '='.repeat(title.length), `Generated: ${new Date().toISOString()}`];
+  for (const c of checks) lines.push('', `[${c.status}] ${c.name}`, `        ${c.detail}`, wrap(`What it means: ${c.meaning}`));
+  return lines.concat(extra, ['']).join('\n');
+}
+
+/**
+ * Save a report as a dated file in ./reports (only when the user passes --save).
+ * This writes ONE new text file inside the project folder. It never changes system settings.
+ */
+function saveReport(kind, text, dir = require('node:path').join(__dirname, '..', '..', 'reports'), now = new Date()) {
+  const fs = require('node:fs');
+  const path = require('node:path');
+  fs.mkdirSync(dir, { recursive: true });
+  const stamp = now.toISOString().replace(/[:T]/g, '-').slice(0, 19);       // 2026-11-27-14-05-09
+  const file = path.join(dir, `${kind}-${stamp}.txt`);
+  fs.writeFileSync(file, text, { flag: 'wx' });                              // never overwrite an existing report
+  return file;
+}
+module.exports = { printChecks, formatChecks, saveReport, wrap, paint, badge };

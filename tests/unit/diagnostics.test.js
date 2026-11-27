@@ -165,3 +165,20 @@ test('safety: tool source contains no state-changing commands', () => {
     assert.equal(hit, null, `${f} contains "${hit && hit[0]}"`);
   }
 });
+
+// ---------------------------------------------------------------- saved reports (stretch goal)
+test('saved reports are dated plain-text files and never overwrite', () => {
+  const os = require('node:os');
+  const { formatChecks, saveReport } = require('../../tools/lib/report');
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'nl-report-'));
+  const checks = [{ status: 'PASS', name: 'Firewall', detail: 'on', meaning: 'It blocks traffic.' }];
+  const text = formatChecks('Test report', checks);
+  assert.ok(text.includes('[PASS] Firewall'));
+  assert.ok(!text.includes(String.fromCharCode(27) + '['), 'no colour codes in saved files');
+  const when = new Date('2026-11-27T14:05:09Z');
+  const file = saveReport('pc-health', text, dir, when);
+  assert.match(path.basename(file), /^pc-health-2026-11-27-14-05-09\.txt$/);
+  assert.ok(fs.readFileSync(file, 'utf8').includes('Generated:'));
+  assert.throws(() => saveReport('pc-health', text, dir, when), /EEXIST/);   // same second: refuses to overwrite
+  fs.rmSync(dir, { recursive: true, force: true });
+});

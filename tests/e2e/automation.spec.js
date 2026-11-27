@@ -23,6 +23,11 @@ test.describe('automation', () => {
     await expect(page.locator('.log-item')).toHaveCount(4);
     await expect(page.locator('#run-rows tr')).toHaveCount(1);
     await expect(page.locator('#run-rows tr')).toContainText('T-1006 (P1)');
+    // execution time, duration, rule names and per-rule results
+    await expect(page.locator('#run-rows .run-time')).toContainText(/\d{2}:\d{2}:\d{2}/);
+    await expect(page.locator('#run-rows .run-duration')).toHaveText(/^\d+ ms$/);
+    await expect(page.locator('#run-rows .rule-name')).toHaveText([/R1 Create CRM lead/, /R2 Create Help Desk ticket/, /R3 Urgent enquiries/, /R4 Create outbox alert/]);
+    await expect(page.locator('.log-item').first()).toContainText(/\d{2}:\d{2}:\d{2}/);
 
     // Help Desk: P1 ticket at top.
     await page.goto('helpdesk.html');

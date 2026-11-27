@@ -9,7 +9,7 @@ test.describe('data & cloud', () => {
     await expect(page.locator('.health-version')).toHaveText(/^\d+\.\d+\.\d+$/);
     await expect(page.locator('.health-build-date')).toHaveText(/^\d{4}-\d{2}-\d{2}$/);
     await expect(page.locator('#cloud-rows tr')).toHaveCount(3);
-    await expect(page.locator('#cloud-rows')).toContainText('rg-northlight-prod-001');
+    await expect(page.locator('#cloud-rows')).toContainText('rg-northlight-web-prod');
     await expect(page.locator('#cloud-rows')).toContainText('CC-1001');
   });
 

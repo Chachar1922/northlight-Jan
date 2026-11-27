@@ -84,6 +84,7 @@
    */
   async function run(trigger, payload) {
     const startedAt = new Date().toISOString();
+    const t0 = performance.now();
     const runId = Store.nextId('autoruns');
     const ctx = Object.assign({ name: '', email: '', company: '', service: '', message: '', lead: null, ticket: null, alert: null }, payload);
     const results = [];
@@ -91,13 +92,13 @@
 
     try { rules = await loadRules(); } catch (err) {
       logEntry(runId, null, 'error', err.message, trigger);
-      Store.add('autoruns', { id: runId, trigger, startedAt, ok: false, error: err.message, results: [] });
+      Store.add('autoruns', { id: runId, trigger, startedAt, durationMs: Math.round(performance.now() - t0), ok: false, error: err.message, results: [] });
       return { ok: false, runId, results, error: err.message };
     }
 
     for (const rule of rules.filter((r) => r.trigger === trigger)) {
       if (!conditionMet(rule.when, ctx)) {
-        results.push({ ruleId: rule.id, name: rule.name, status: 'skipped', detail: 'Condition not met.' });
+        results.push({ ruleId: rule.id, name: rule.name, status: 'skipped', detail: 'Condition not met.', at: new Date().toISOString() });
         continue;
       }
       try {
@@ -108,16 +109,16 @@
         }
         const message = render(rule.log || rule.name, ctx);
         logEntry(runId, rule, 'executed', message, trigger);
-        results.push({ ruleId: rule.id, name: rule.name, status: 'executed', detail: message });
+        results.push({ ruleId: rule.id, name: rule.name, status: 'executed', detail: message, at: new Date().toISOString() });
       } catch (err) {
         logEntry(runId, rule, 'error', err.message, trigger);
-        results.push({ ruleId: rule.id, name: rule.name, status: 'error', detail: err.message });
+        results.push({ ruleId: rule.id, name: rule.name, status: 'error', detail: err.message, at: new Date().toISOString() });
       }
     }
 
     const ok = results.every((r) => r.status !== 'error');
     Store.add('autoruns', {
-      id: runId, trigger, startedAt, ok, results,
+      id: runId, trigger, startedAt, durationMs: Math.round(performance.now() - t0), ok, results,
       summary: { name: ctx.name, leadId: ctx.lead && ctx.lead.id, ticketId: ctx.ticket && ctx.ticket.id, priority: ctx.ticket && ctx.ticket.priority, alertId: ctx.alert && ctx.alert.id },
     });
     return { ok, runId, results, lead: ctx.lead, ticket: ctx.ticket, alert: ctx.alert };

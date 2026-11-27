@@ -41,6 +41,9 @@
     return Store.update('opportunities', id, { stage });
   }
 
+  /** Record why an opportunity was won or lost. */
+  function setOpportunityReason(id, reason) { return Store.update('opportunities', id, { reason: String(reason).trim().slice(0, 300) }); }
+
   /** Count and total value of opportunities per stage, in pipeline order. */
   function stageSummary() {
     const opps = Store.all('opportunities');
@@ -60,5 +63,5 @@
   function closeCase(id) { return Store.update('cases', id, { status: 'Closed', closedAt: new Date().toISOString() }); }
   function isCaseOverdue(c, now = Date.now()) { return c.status === 'Open' && new Date(c.dueAt).getTime() < now; }
 
-  global.CRM = { STAGES, createLead, convertLead, setLeadStatus, setOpportunityStage, stageSummary, createCase, closeCase, isCaseOverdue };
+  global.CRM = { setOpportunityReason, STAGES, createLead, convertLead, setLeadStatus, setOpportunityStage, stageSummary, createCase, closeCase, isCaseOverdue };
 })(window);

@@ -5,20 +5,20 @@
   "environment": "prod",
   "requiredTags": ["owner", "env", "cost-center"],
   "resourceGroup": {
-    "name": "rg-northlight-prod-001",
+    "name": "rg-northlight-web-prod",
     "location": "westeurope",
     "tags": { "owner": "it-team@northlight.example", "env": "prod", "cost-center": "CC-1001" }
   },
   "resources": [
     {
       "type": "webApp",
-      "name": "app-northlight-prod-001",
+      "name": "app-northlight-web-prod",
       "description": "Static web app hosting the Northlight Studio website and internal tools",
       "tags": { "owner": "it-team@northlight.example", "env": "prod", "cost-center": "CC-1001" }
     },
     {
       "type": "storage",
-      "name": "stnorthlightprod001",
+      "name": "stnorthlightwebprod",
       "description": "Storage account for exported data backups and static assets",
       "tags": { "owner": "it-team@northlight.example", "env": "prod", "cost-center": "CC-1001" }
     }

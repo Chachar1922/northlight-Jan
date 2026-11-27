@@ -15,9 +15,9 @@ const path = require('node:path');
 
 /** Naming convention (documented in README). */
 const NAME_RULES = {
-  resourceGroup: { regex: /^rg-[a-z0-9]+-(dev|test|prod)-\d{3}$/, example: 'rg-northlight-prod-001' },
-  webApp: { regex: /^app-[a-z0-9]+-(dev|test|prod)-\d{3}$/, example: 'app-northlight-prod-001' },
-  storage: { regex: /^st[a-z0-9]{1,22}$/, example: 'stnorthlightprod001 (3-24 lowercase letters/digits, no hyphens)' },
+  resourceGroup: { regex: /^rg-[a-z0-9]+-[a-z0-9]+-(dev|test|prod)$/, example: 'rg-northlight-web-prod' },
+  webApp: { regex: /^app-[a-z0-9]+-[a-z0-9]+-(dev|test|prod)$/, example: 'app-northlight-web-prod' },
+  storage: { regex: /^st[a-z0-9]{1,22}$/, example: 'stnorthlightwebprod (3-24 lowercase letters/digits, no hyphens)' },
 };
 const ENVIRONMENTS = ['dev', 'test', 'prod'];
 const REQUIRED_TYPES = ['webApp', 'storage'];
@@ -30,7 +30,13 @@ const TAG_RULES = {
 /** Returns an array of error strings (empty = valid). Pure function, unit-tested. */
 function validate(config) {
   const errors = [];
-  if (!config || typeof config !== 'object') return ['Configuration is not a JSON object.'];
+  if (!config || typeof config !== 'object' || Array.isArray(config)) return ['Configuration is not a JSON object.'];
+  // Structure: required top-level fields with the right types.
+  for (const key of ['project', 'provider', 'environment']) if (typeof config[key] !== 'string' || !config[key]) errors.push(`Missing or invalid "${key}" (expected a non-empty string).`);
+  if (!Array.isArray(config.requiredTags)) errors.push('Missing or invalid "requiredTags" (expected an array).');
+  if (!config.resourceGroup || typeof config.resourceGroup !== 'object') errors.push('Missing "resourceGroup" object.');
+  if (!Array.isArray(config.resources)) errors.push('Missing "resources" array.');
+  if (errors.length) return errors;
   const required = Array.isArray(config.requiredTags) && config.requiredTags.length ? config.requiredTags : Object.keys(TAG_RULES);
   for (const t of Object.keys(TAG_RULES)) if (!required.includes(t)) errors.push(`requiredTags must include "${t}".`);
 
@@ -46,7 +52,7 @@ function validate(config) {
     }
     if (config.environment && tags.env && tags.env !== config.environment) errors.push(`${label} ("${res.name}"): tag env "${tags.env}" does not match environment "${config.environment}".`);
     // The environment embedded in the name must agree with the config as well.
-    const m = /-(dev|test|prod)-/.exec(res.name || '');
+    const m = /-(dev|test|prod)$/.exec(res.name || '');
     if (m && config.environment && m[1] !== config.environment) errors.push(`${label}: name "${res.name}" is for "${m[1]}" but environment is "${config.environment}".`);
   };
 

@@ -9,11 +9,12 @@
  * The first failing step is the most likely place to start fixing.
  * Exit code: 1 if any step fails, otherwise 0.
  *
- * Usage:  node tools/network-doctor.js [--json]
+ * Usage:  node tools/network-doctor.js [--json] [--save]
+ *          --save writes a dated report file into ./reports (nothing else is written).
  */
 'use strict';
 const { runNetworkDoctor } = require('./lib/diagnostics');
-const { printChecks, wrap, paint } = require('./lib/report');
+const { printChecks, formatChecks, saveReport, wrap, paint } = require('./lib/report');
 
 (async () => {
   const report = await runNetworkDoctor();
@@ -31,5 +32,6 @@ const { printChecks, wrap, paint } = require('./lib/report');
     }
     console.log('\nThis tool only reads information and sends a few ping packets. It never changes settings.\n');
   }
+  if (process.argv.includes('--save')) console.log(`Report saved: ${saveReport('network-doctor', formatChecks('Northlight network doctor report', report.steps, [report.firstFailure ? `First failing step: ${report.firstFailure.name}` : 'All steps passed.']))}`);
   process.exitCode = report.firstFailure ? 1 : 0;
 })();
