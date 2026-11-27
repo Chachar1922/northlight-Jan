@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+  <title>Staff &amp; MFA | Northlight Studio IT</title>
+  <meta name="description" content="Northlight Studio staff directory with demonstration sign-in, TOTP multi-factor authentication and joiner/leaver workflows.">
+  <link rel="icon" href="assets/hero.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body data-page="staff">
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <div class="app">
+    <aside class="sidebar" id="sidebar" aria-label="Sidebar"></aside>
+    <div class="main">
+      <header class="topbar">
+        <button class="btn secondary menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="sidebar">&#9776; Menu</button>
+        <h1>Staff Directory &amp; MFA</h1>
+        <span class="spacer"></span>
+        <span id="whoami" class="small muted"></span>
+        <button class="btn secondary small" id="signout-btn" type="button" hidden>Sign out</button>
+      </header>
+
+      <main id="main" class="content">
+        <div class="alert warning" role="note">
+          <strong>Learning model &ndash; not production security</strong>
+          Sign-in here runs entirely in your browser. Anyone using the browser developer tools can read or change localStorage and bypass these checks. In a real system, passwords, MFA codes and roles must be verified and enforced <em>server-side</em>. Hiding a section in the page is not security; this demo only shows the concepts (salted password hashing, TOTP, role-based UI and joiner/leaver steps). See <code>RISKS.md</code>.
+        </div>
+
+        <div id="signin-view" hidden>
+          <div class="split">
+            <section class="card" aria-labelledby="signin-title">
+              <h2 id="signin-title">Sign in</h2>
+              <div id="signin-result" tabindex="-1" aria-live="polite"></div>
+
+              <form id="login-form" class="form" novalidate>
+                <p class="muted mb-0">Step 1 of 2: e-mail and password</p>
+                <div class="field"><label for="login-email">Work e-mail</label><input id="login-email" name="email" type="email" autocomplete="username"></div>
+                <div class="field"><label for="login-password">Password</label><input id="login-password" name="password" type="password" autocomplete="current-password"></div>
+                <div class="form-actions"><button class="btn" type="submit">Continue</button></div>
+              </form>
+
+              <form id="mfa-form" class="form" novalidate hidden>
+                <p class="muted mb-0">Step 2 of 2: enter the 6-digit code from your authenticator app</p>
+                <div class="field"><label for="mfa-code">One-time code</label><input id="mfa-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6"></div>
+                <div class="form-actions">
+                  <button class="btn" type="submit">Verify and sign in</button>
+                  <button class="btn secondary" type="button" id="mfa-cancel">Start again</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="card" aria-labelledby="demo-title">
+              <h2 id="demo-title">Demo accounts (fictional)</h2>
+              <p class="small muted">These credentials are fake and published on purpose so you can try the demo. A real authenticator app would be set up with the secret; the live code column stands in for it. A real system would never display any of this.</p>
+              <div class="table-wrap"><table>
+                <caption class="visually-hidden">Demo accounts</caption>
+                <thead><tr><th scope="col">E-mail</th><th scope="col">Dept</th><th scope="col">Password</th><th scope="col">Live code</th></tr></thead>
+                <tbody id="demo-rows"></tbody></table></div>
+              <p class="small muted mt-1 mb-0">Code refreshes every 30 s (<span id="code-timer"></span> s left).</p>
+            </section>
+          </div>
+        </div>
+
+        <div id="app-view" hidden>
+          <section class="card mb-1" aria-labelledby="dir-title">
+            <h2 id="dir-title">Staff directory</h2>
+            <div class="table-wrap"><table>
+              <caption class="visually-hidden">Staff directory</caption>
+              <thead><tr><th scope="col">ID</th><th scope="col">Name</th><th scope="col">Department</th><th scope="col">Role</th><th scope="col">Status</th></tr></thead>
+              <tbody id="staff-rows"></tbody></table></div>
+          </section>
+          <div id="admin-mount"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/seed.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/staff.js"></script>
+</body>
+</html>
