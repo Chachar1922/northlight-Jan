@@ -3,7 +3,7 @@ const { test, expect } = require('@playwright/test');
 
 test('stale cached script: page keeps its navigation and shows a reload warning', async ({ page }) => {
   // Simulate the browser holding an OLD tickets.js that no longer matches the new config.
-  await page.route('**/js/tickets.js', (route) => route.fulfill({
+  await page.route('**/js/tickets.js*', (route) => route.fulfill({
     contentType: 'text/javascript',
     body: "window.Tickets = { IMPACT: [], URGENCY: [], dueAtFor() { throw new TypeError(\"Cannot read properties of undefined (reading 'P1')\"); } };",
   }));
